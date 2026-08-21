@@ -1,5 +1,7 @@
 .container {
-  background: #1e1e1e;
+  background: var(--screen-code);
+  border: 1px solid var(--screen-code-border);
+  box-shadow: inset 5px 6px 16px rgba(0,0,0,.38);
   border-radius: var(--clay-radius-md);
   overflow: hidden;
   font-family: var(--font-mono);
@@ -8,7 +10,7 @@
 .pre {
   margin: 0;
   padding: 0;
-  background: #1e1e1e;
+  background: var(--screen-code);
   color: #d4d4d4;
   font-size: 13px;
   line-height: 1.6;

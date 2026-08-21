@@ -1,67 +1,210 @@
-/*
- * Claymorphism design tokens: soft, puffy, extruded surfaces built from a
- * dual light/dark shadow pair on a monochrome background — not flat
- * "neumorphism" grey, but a warmer pastel palette with one saturated
- * accent. Redefined under prefers-color-scheme so components never
- * hardcode a color.
- */
-:root {
-  --clay-bg: #e9edf5;
-  --clay-surface: #eef1f8;
-  --clay-surface-raised: #f4f6fb;
-  --clay-shadow-light: rgba(255, 255, 255, 0.85);
-  --clay-shadow-dark: rgba(163, 177, 198, 0.55);
-
-  --clay-text: #33394d;
-  --clay-text-muted: #6b7280;
-
-  --clay-accent: #6c63ff;
+:root,
+:root[data-theme="light"] {
+  color-scheme: light;
+  --clay-bg: #faf0eb;
+  --clay-bg-deep: #f4e3dc;
+  --clay-surface: #fdf2ef;
+  --clay-surface-raised: #fffaf7;
+  --clay-surface-muted: #f7e9e2;
+  --clay-border: #ead5cc;
+  --clay-border-highlight: rgba(255, 255, 255, 0.78);
+  --clay-shadow-light: rgba(255, 255, 255, 0.92);
+  --clay-shadow-dark: rgba(193, 123, 94, 0.24);
+  --clay-text: #33283a;
+  --clay-text-strong: #281f2d;
+  --clay-text-muted: #76666f;
+  --clay-on-dark: #fff8f4;
+  --clay-accent: #8d7ce8;
+  --clay-accent-strong: #6f5ed0;
+  --clay-accent-soft: #ded4f2;
   --clay-accent-text: #ffffff;
-  --clay-accent-shadow-light: rgba(255, 255, 255, 0.35);
-  --clay-accent-shadow-dark: rgba(69, 58, 196, 0.45);
-
-  --clay-danger: #e14e63;
-  --clay-success: #2fb787;
-
-  --clay-radius-lg: 28px;
-  --clay-radius-md: 18px;
-  --clay-radius-sm: 12px;
+  --clay-accent-shadow-light: rgba(255, 255, 255, 0.44);
+  --clay-accent-shadow-dark: rgba(89, 68, 170, 0.38);
+  --clay-coral: #ff795c;
+  --clay-coral-strong: #e95b3f;
+  --clay-coral-soft: #fec7c3;
+  --clay-mint: #31c491;
+  --clay-mint-strong: #159e70;
+  --clay-mint-soft: #cee9da;
+  --clay-yellow: #f5bd4b;
+  --clay-yellow-soft: #f9e5cf;
+  --clay-blue: #63b7eb;
+  --clay-blue-soft: #bddaf6;
+  --clay-navy: #373b58;
+  --clay-navy-strong: #242c40;
+  --clay-danger: #e95b68;
+  --clay-success: #2bad7f;
+  --clay-warning: #d18b20;
+  --screen-splash: #9a8cd9;
+  --screen-splash-border: #8979ca;
+  --screen-auth: #fee6d7;
+  --screen-auth-border: #efc7b5;
+  --screen-github: #cee9da;
+  --screen-github-border: #afd4c0;
+  --screen-dashboard: #fdefe4;
+  --screen-dashboard-border: #ead2c1;
+  --screen-repositories: #ded4f2;
+  --screen-repositories-border: #c4b6e3;
+  --screen-overview: #fec7c3;
+  --screen-overview-border: #eca9aa;
+  --screen-folder: #f9e5cf;
+  --screen-folder-border: #e7c9a8;
+  --screen-graph: #dcd2f1;
+  --screen-graph-border: #beb0df;
+  --screen-code: #3c445c;
+  --screen-code-border: #2d3449;
+  --screen-chat: #feead1;
+  --screen-chat-border: #e8cba9;
+  --screen-answer: #e0eed7;
+  --screen-answer-border: #bed6b1;
+  --screen-settings: #fececf;
+  --screen-settings-border: #e9adaf;
+  --screen-profile: #bddaf6;
+  --screen-profile-border: #9bc1e8;
+  --clay-radius-lg: 24px;
+  --clay-radius-md: 16px;
+  --clay-radius-sm: 10px;
   --clay-radius-pill: 999px;
-
   --clay-space-1: 4px;
   --clay-space-2: 8px;
   --clay-space-3: 16px;
   --clay-space-4: 24px;
   --clay-space-5: 32px;
   --clay-space-6: 48px;
+  --clay-space-7: 64px;
+  --clay-space-8: 80px;
+  --clay-font: Inter, ui-rounded, "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --clay-shadow-panel: 14px 16px 30px var(--clay-panel-shadow, var(--clay-shadow-dark)), -9px -9px 20px var(--clay-shadow-light), inset 2px 2px 4px var(--clay-border-highlight), inset -4px -5px 9px var(--clay-panel-inset, rgba(157, 93, 69, 0.12));
+  --clay-shadow-raised: 9px 11px 20px var(--clay-shadow-dark), -7px -7px 15px var(--clay-shadow-light), inset 2px 2px 3px var(--clay-border-highlight), inset -3px -4px 7px rgba(157, 93, 69, 0.1);
+  --clay-shadow-soft: 6px 8px 14px var(--clay-shadow-dark), -5px -5px 11px var(--clay-shadow-light), inset 2px 2px 3px rgba(255, 255, 255, 0.58), inset -2px -3px 5px rgba(157, 93, 69, 0.08);
+  --clay-shadow-pressed: inset 5px 6px 11px rgba(177, 112, 86, 0.25), inset -4px -4px 9px rgba(255, 255, 255, 0.72), 1px 1px 0 rgba(255, 255, 255, 0.55);
+  --clay-shadow-accent-raised: 7px 8px 16px var(--clay-accent-shadow-dark), -4px -4px 10px var(--clay-accent-shadow-light), inset 1px 1px 0 rgba(255, 255, 255, 0.42);
+  --clay-shadow-accent-pressed: inset 4px 5px 9px var(--clay-accent-shadow-dark), inset -3px -3px 7px var(--clay-accent-shadow-light);
+}
 
-  --clay-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-
-  --clay-shadow-raised: 8px 8px 16px var(--clay-shadow-dark), -8px -8px 16px var(--clay-shadow-light);
-  --clay-shadow-soft: 4px 4px 10px var(--clay-shadow-dark), -4px -4px 10px var(--clay-shadow-light);
-  --clay-shadow-pressed: inset 4px 4px 8px var(--clay-shadow-dark), inset -4px -4px 8px var(--clay-shadow-light);
-
-  --clay-shadow-accent-raised: 8px 8px 16px var(--clay-accent-shadow-dark), -8px -8px 16px var(--clay-accent-shadow-light);
-  --clay-shadow-accent-pressed: inset 4px 4px 8px var(--clay-accent-shadow-dark),
-    inset -4px -4px 8px var(--clay-accent-shadow-light);
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --clay-bg: #222839;
+  --clay-bg-deep: #191e2c;
+  --clay-surface: #30384d;
+  --clay-surface-raised: #384158;
+  --clay-surface-muted: #282f42;
+  --clay-border: rgba(255, 244, 238, 0.1);
+  --clay-border-highlight: rgba(255, 255, 255, 0.08);
+  --clay-shadow-light: rgba(255, 255, 255, 0.07);
+  --clay-shadow-dark: rgba(7, 10, 18, 0.62);
+  --clay-text: #fff4ee;
+  --clay-text-strong: #ffffff;
+  --clay-text-muted: #c4b9bd;
+  --clay-accent: #a393ff;
+  --clay-accent-strong: #8d7ce8;
+  --clay-accent-soft: #4a456a;
+  --clay-coral: #ff856a;
+  --clay-coral-strong: #ff795c;
+  --clay-coral-soft: #63423f;
+  --clay-mint: #43d4a2;
+  --clay-mint-strong: #31c491;
+  --clay-mint-soft: #284f48;
+  --clay-yellow: #f7c75f;
+  --clay-yellow-soft: #564a32;
+  --clay-blue: #79c6f4;
+  --clay-blue-soft: #344f65;
+  --clay-navy: #171c29;
+  --clay-navy-strong: #10141f;
+  --clay-danger: #ff7884;
+  --clay-success: #43d4a2;
+  --clay-warning: #f7c75f;
+  --screen-splash: #5a527e;
+  --screen-splash-border: #756b9f;
+  --screen-auth: #4a3938;
+  --screen-auth-border: #6a4c48;
+  --screen-github: #294a40;
+  --screen-github-border: #3d685a;
+  --screen-dashboard: #423936;
+  --screen-dashboard-border: #5d4943;
+  --screen-repositories: #443e5d;
+  --screen-repositories-border: #5d537d;
+  --screen-overview: #5a3b40;
+  --screen-overview-border: #794f54;
+  --screen-folder: #504535;
+  --screen-folder-border: #6b5a41;
+  --screen-graph: #423d59;
+  --screen-graph-border: #5d5379;
+  --screen-code: #242b3d;
+  --screen-code-border: #151a27;
+  --screen-chat: #4e4234;
+  --screen-chat-border: #6a5740;
+  --screen-answer: #344b39;
+  --screen-answer-border: #486650;
+  --screen-settings: #573c42;
+  --screen-settings-border: #754f56;
+  --screen-profile: #334d66;
+  --screen-profile-border: #466887;
+  --clay-accent-shadow-light: rgba(255, 255, 255, 0.1);
+  --clay-accent-shadow-dark: rgba(5, 7, 14, 0.62);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --clay-bg: #1c2029;
-    --clay-surface: #232937;
-    --clay-surface-raised: #29303f;
-    --clay-shadow-light: rgba(255, 255, 255, 0.045);
-    --clay-shadow-dark: rgba(0, 0, 0, 0.65);
-
-    --clay-text: #e7e9f3;
-    --clay-text-muted: #9aa1b5;
-
-    --clay-accent: #8b82ff;
-    --clay-accent-shadow-light: rgba(255, 255, 255, 0.06);
-    --clay-accent-shadow-dark: rgba(0, 0, 0, 0.55);
-
-    --clay-danger: #ff6b7a;
-    --clay-success: #4ade80;
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --clay-bg: #222839;
+    --clay-bg-deep: #191e2c;
+    --clay-surface: #30384d;
+    --clay-surface-raised: #384158;
+    --clay-surface-muted: #282f42;
+    --clay-border: rgba(255, 244, 238, 0.1);
+    --clay-border-highlight: rgba(255, 255, 255, 0.08);
+    --clay-shadow-light: rgba(255, 255, 255, 0.07);
+    --clay-shadow-dark: rgba(7, 10, 18, 0.62);
+    --clay-text: #fff4ee;
+    --clay-text-strong: #ffffff;
+    --clay-text-muted: #c4b9bd;
+    --clay-accent: #a393ff;
+    --clay-accent-strong: #8d7ce8;
+    --clay-accent-soft: #4a456a;
+    --clay-coral: #ff856a;
+    --clay-coral-strong: #ff795c;
+    --clay-coral-soft: #63423f;
+    --clay-mint: #43d4a2;
+    --clay-mint-strong: #31c491;
+    --clay-mint-soft: #284f48;
+    --clay-yellow: #f7c75f;
+    --clay-yellow-soft: #564a32;
+    --clay-blue: #79c6f4;
+    --clay-blue-soft: #344f65;
+    --clay-navy: #171c29;
+    --clay-navy-strong: #10141f;
+    --clay-danger: #ff7884;
+    --clay-success: #43d4a2;
+    --clay-warning: #f7c75f;
+    --screen-splash: #5a527e;
+    --screen-splash-border: #756b9f;
+    --screen-auth: #4a3938;
+    --screen-auth-border: #6a4c48;
+    --screen-github: #294a40;
+    --screen-github-border: #3d685a;
+    --screen-dashboard: #423936;
+    --screen-dashboard-border: #5d4943;
+    --screen-repositories: #443e5d;
+    --screen-repositories-border: #5d537d;
+    --screen-overview: #5a3b40;
+    --screen-overview-border: #794f54;
+    --screen-folder: #504535;
+    --screen-folder-border: #6b5a41;
+    --screen-graph: #423d59;
+    --screen-graph-border: #5d5379;
+    --screen-code: #242b3d;
+    --screen-code-border: #151a27;
+    --screen-chat: #4e4234;
+    --screen-chat-border: #6a5740;
+    --screen-answer: #344b39;
+    --screen-answer-border: #486650;
+    --screen-settings: #573c42;
+    --screen-settings-border: #754f56;
+    --screen-profile: #334d66;
+    --screen-profile-border: #466887;
+    --clay-accent-shadow-light: rgba(255, 255, 255, 0.1);
+    --clay-accent-shadow-dark: rgba(5, 7, 14, 0.62);
   }
 }

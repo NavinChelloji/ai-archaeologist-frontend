@@ -25,15 +25,16 @@
 .input {
   width: 100%;
   padding: var(--clay-space-3);
-  border: 1px solid transparent;
-  border-radius: var(--clay-radius-md);
-  background: var(--clay-surface);
+  min-height: 44px;
+  border: 1px solid var(--clay-border);
+  border-radius: var(--clay-radius-sm);
+  background: var(--clay-surface-raised);
   color: var(--clay-text);
   font-family: inherit;
   font-size: 14px;
   line-height: 1.4;
   transition: all 200ms ease-in-out;
-  box-shadow: var(--clay-shadow-soft);
+  box-shadow: var(--clay-shadow-pressed);
 }
 
 .input::placeholder {
@@ -43,11 +44,11 @@
 .input:focus {
   outline: none;
   border-color: var(--clay-accent);
-  box-shadow: var(--clay-shadow-soft), 0 0 0 3px rgba(108, 99, 255, 0.1);
+  box-shadow: var(--clay-shadow-pressed), 0 0 0 3px color-mix(in srgb, var(--clay-accent) 18%, transparent);
 }
 
 .input.withIcon {
-  padding-left: var(--clay-space-5);
+  padding-left: 44px;
 }
 
 .input.error {

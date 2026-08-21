@@ -1,6 +1,25 @@
 .card {
   background: var(--clay-surface);
+  border: 1px solid var(--clay-border);
   border-radius: var(--clay-radius-lg);
   box-shadow: var(--clay-shadow-raised);
   padding: var(--clay-space-5);
+  position: relative;
+  isolation: isolate;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 1px 1px auto;
+  height: 38%;
+  border-radius: calc(var(--clay-radius-lg) - 2px) calc(var(--clay-radius-lg) - 2px) 50% 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.24), transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.card > * {
+  position: relative;
+  z-index: 1;
 }

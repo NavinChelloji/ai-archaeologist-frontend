@@ -50,7 +50,7 @@ export function RepositoryDashboardPage() {
           <h1 className={styles.title}>Dashboard</h1>
           <p className={styles.subtitle}>Welcome back, John! 👋</p>
         </div>
-        <Link to="/repositories/import">
+        <Link to="/repositories">
           <Button variant="primary">+ Import Repository</Button>
         </Link>
       </div>
@@ -67,7 +67,7 @@ export function RepositoryDashboardPage() {
         ))}
       </div>
 
-      <div className={styles.section}>
+      <div className={[styles.section, styles.recentSection].join(" ")}>
         <h2 className={styles.sectionTitle}>Recent Repositories</h2>
         <div className={styles.repositoriesList}>
           {recentRepositories.map((repo) => (
@@ -86,7 +86,7 @@ export function RepositoryDashboardPage() {
         </div>
       </div>
 
-      <div className={styles.section}>
+      <div className={[styles.section, styles.nextStepsSection].join(" ")}>
         <h2 className={styles.sectionTitle}>Next Steps</h2>
         <Card>
           <ul className={styles.stepsList}>

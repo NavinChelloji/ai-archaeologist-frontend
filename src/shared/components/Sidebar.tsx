@@ -52,7 +52,9 @@ export const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(
               to={item.path}
               className={[
                 styles.item,
-                activeItem === item.path && styles.active,
+                (activeItem === item.path ||
+                  (item.path !== "/" && activeItem?.startsWith(`${item.path}/`))) &&
+                  styles.active,
               ]
                 .filter(Boolean)
                 .join(" ")}

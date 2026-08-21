@@ -44,8 +44,8 @@ export function SignupPage(): ReactElement {
   return (
     <div className={styles.page}>
       <Card className={styles.card}>
-        <h1 className={styles.title}>Create your account</h1>
-        <p className={styles.subtitle}>You can connect GitHub afterward, whenever you're ready to import a repository.</p>
+        <h1 className={styles.title}>Create Account</h1>
+        <p className={styles.subtitle}>Register to get started</p>
 
         {formError ? (
           <Alert tone="danger" title="Couldn't create your account">

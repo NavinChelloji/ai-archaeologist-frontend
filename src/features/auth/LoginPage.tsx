@@ -52,8 +52,8 @@ export function LoginPage(): ReactElement {
   return (
     <div className={styles.page}>
       <Card className={styles.card}>
-        <h1 className={styles.title}>AI Code Archaeologist</h1>
-        <p className={styles.subtitle}>Sign in to import a repository and start asking it questions.</p>
+        <h1 className={styles.title}>Welcome Back</h1>
+        <p className={styles.subtitle}>Login to your account</p>
 
         {redirectError ? (
           <Alert tone="danger" title="Couldn't sign you in">

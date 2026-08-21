@@ -3,6 +3,7 @@
   padding: var(--clay-space-3) var(--clay-space-4);
   box-shadow: var(--clay-shadow-soft);
   background: var(--clay-surface);
+  border: 1px solid var(--clay-border);
   border-left: 4px solid transparent;
 }
 
