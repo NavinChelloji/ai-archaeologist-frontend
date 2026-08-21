@@ -1,68 +1,57 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type Theme = "light" | "dark" | "system";
 
-export function useTheme() {
-  const [theme, setTheme] = useState<Theme>(() => {
-    const stored = localStorage.getItem("theme");
-    if (stored === "light" || stored === "dark" || stored === "system") {
-      return stored;
-    }
-    return "system";
-  });
+const THEME_STORAGE_KEY = "theme";
+const THEME_CHANGE_EVENT = "ai-architect-theme-change";
+const DARK_MODE_QUERY = "(prefers-color-scheme: dark)";
 
-  const [isDark, setIsDark] = useState(() => {
-    if (theme === "system") {
-      return window.matchMedia("(prefers-color-scheme: dark)").matches;
-    }
-    return theme === "dark";
-  });
+function readStoredTheme(): Theme {
+  const stored = localStorage.getItem(THEME_STORAGE_KEY);
+  return stored === "light" || stored === "dark" || stored === "system" ? stored : "system";
+}
+
+function applyTheme(theme: Theme): void {
+  const root = document.documentElement;
+  if (theme === "system") root.removeAttribute("data-theme");
+  else root.setAttribute("data-theme", theme);
+  localStorage.setItem(THEME_STORAGE_KEY, theme);
+}
+
+export function useTheme(): { theme: Theme; setTheme: (theme: Theme) => void; isDark: boolean } {
+  const [theme, setThemeState] = useState<Theme>(readStoredTheme);
+  const [systemIsDark, setSystemIsDark] = useState(() => window.matchMedia(DARK_MODE_QUERY).matches);
 
   useEffect(() => {
-    const root = document.documentElement;
-
-    // Set the data-theme attribute
-    if (theme === "system") {
-      root.removeAttribute("data-theme");
-    } else {
-      root.setAttribute("data-theme", theme);
-    }
-
-    // Save to localStorage
-    localStorage.setItem("theme", theme);
-
-    // Update isDark state
-    if (theme === "system") {
-      setIsDark(window.matchMedia("(prefers-color-scheme: dark)").matches);
-    } else {
-      setIsDark(theme === "dark");
-    }
+    applyTheme(theme);
   }, [theme]);
 
-  // Listen for system theme changes when in system mode
   useEffect(() => {
-    if (theme !== "system") return;
-
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const handleChange = (e: MediaQueryListEvent) => {
-      setIsDark(e.matches);
+    const handleThemeChange = (event: Event): void => {
+      setThemeState((event as CustomEvent<Theme>).detail);
     };
+    const handleStorage = (event: StorageEvent): void => {
+      if (event.key === THEME_STORAGE_KEY) setThemeState(readStoredTheme());
+    };
+    window.addEventListener(THEME_CHANGE_EVENT, handleThemeChange);
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      window.removeEventListener(THEME_CHANGE_EVENT, handleThemeChange);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
 
-    // Modern browsers
-    if (mediaQuery.addEventListener) {
-      mediaQuery.addEventListener("change", handleChange);
-      return () => mediaQuery.removeEventListener("change", handleChange);
-    }
-    // Legacy browsers
-    else {
-      mediaQuery.addListener(handleChange);
-      return () => mediaQuery.removeListener(handleChange);
-    }
-  }, [theme]);
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(DARK_MODE_QUERY);
+    const handleChange = (event: MediaQueryListEvent): void => setSystemIsDark(event.matches);
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
 
-  return {
-    theme,
-    setTheme,
-    isDark,
-  };
+  const setTheme = useCallback((nextTheme: Theme): void => {
+    setThemeState(nextTheme);
+    window.dispatchEvent(new CustomEvent<Theme>(THEME_CHANGE_EVENT, { detail: nextTheme }));
+  }, []);
+
+  return { theme, setTheme, isDark: theme === "system" ? systemIsDark : theme === "dark" };
 }

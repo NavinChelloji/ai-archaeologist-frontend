@@ -17,6 +17,7 @@ export { Sidebar, type SidebarItem } from "./Sidebar";
 export { Spinner } from "./Spinner";
 export { SyntaxHighlighter } from "./SyntaxHighlighter";
 export { TextField } from "./TextField";
+export { ThemeToggle } from "./ThemeToggle";
 
 // Icons
 export * from "./icons";

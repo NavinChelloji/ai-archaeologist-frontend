@@ -1,0 +1,134 @@
+.container {
+  --clay-panel-shadow: rgba(101, 74, 158, 0.35);
+  --clay-panel-inset: rgba(87, 62, 143, 0.14);
+  width: 100%;
+  min-height: calc(100dvh - 120px);
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: clamp(22px, 3vw, 38px);
+  border: 1px solid var(--screen-repositories-border);
+  border-radius: 26px;
+  background: var(--screen-repositories);
+  box-shadow: var(--clay-shadow-panel);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.title {
+  font-size: clamp(22px, 3.4vw, 28px);
+  font-weight: 850;
+  color: var(--clay-text-strong);
+  margin: 0 0 6px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--clay-text-muted);
+}
+
+.progressCard {
+  padding: 24px;
+  background: var(--clay-surface);
+  border-color: var(--screen-repositories-border);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.progressLabel {
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--clay-text);
+}
+
+.progressPercent {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--clay-text-strong);
+}
+
+.progressBar {
+  height: 12px;
+  background: var(--clay-surface-muted);
+  border-radius: 99px;
+  overflow: hidden;
+  box-shadow: var(--clay-shadow-pressed);
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--clay-accent);
+  transition: width 320ms ease;
+}
+
+.stages {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.stageStep {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--clay-text-muted);
+}
+
+.stageDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--clay-surface-muted);
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
+}
+
+.stageStep.active {
+  color: var(--clay-text-strong);
+  font-weight: 700;
+}
+.stageStep.active .stageDot {
+  background: var(--clay-accent);
+}
+
+.stageStep.done .stageDot {
+  background: var(--clay-mint);
+}
+.stageStep.done {
+  color: var(--clay-text);
+}
+
+.connectionNote {
+  font-size: 11px;
+  color: var(--clay-text-muted);
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .container {
+    min-height: 0;
+    padding: 24px 16px;
+    border-radius: 20px;
+  }
+  .header {
+    flex-direction: column;
+  }
+}

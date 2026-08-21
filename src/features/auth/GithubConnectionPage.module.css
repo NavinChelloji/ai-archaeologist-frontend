@@ -1,0 +1,8 @@
+.page { min-height: calc(100dvh - 80px); display: grid; place-items: center; padding: 36px 20px; }
+.card { --clay-panel-shadow: rgba(63, 137, 103, 0.34); --clay-panel-inset: rgba(46, 118, 86, 0.14); width: min(100%, 420px); min-height: 500px; padding: 52px 38px 36px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; text-align: center; border: 1px solid var(--screen-github-border); border-radius: 28px; background: var(--screen-github); box-shadow: var(--clay-shadow-panel); }
+.mark { width: 112px; height: 112px; display: grid; place-items: center; border: 1px solid var(--screen-github-border); border-radius: 50%; color: var(--clay-navy); background: var(--clay-surface); box-shadow: var(--clay-shadow-soft); }
+.card h1 { font-size: 28px; color: var(--clay-text-strong); }
+.card p { max-width: 280px; color: var(--clay-text-muted); line-height: 1.6; }
+.card small { color: var(--clay-text-muted); }
+.connect { min-width: 190px; min-height: 48px; padding: 12px 22px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; border-radius: var(--clay-radius-pill); color: #fff; background: linear-gradient(145deg,var(--clay-mint),var(--clay-mint-strong)); box-shadow: 7px 8px 16px color-mix(in srgb,var(--clay-mint-strong) 40%,transparent),inset 1px 1px 0 rgba(255,255,255,.45); text-decoration: none; font-weight: 800; }
+.back { color: var(--clay-text-muted); font-size: 13px; text-decoration: none; }

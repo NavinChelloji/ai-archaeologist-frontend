@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactElement } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { githubLinkStartUrl, resendVerification, unlinkGithub } from "../features/auth/auth-api";
+import { resendVerification, unlinkGithub } from "../features/auth/auth-api";
 import { useAuth } from "../features/auth/auth-context";
 import { describeAuthError } from "../features/auth/error-messages";
 import { ApiError } from "../shared/api/errors";
@@ -8,6 +8,7 @@ import { Alert } from "../shared/components/Alert";
 import { Button } from "../shared/components/Button";
 import { Card } from "../shared/components/Card";
 import { GithubMark } from "../shared/components/icons";
+import { useTheme } from "../shared/hooks/useTheme";
 import styles from "./SettingsPage.module.css";
 
 /** GitHub connect/disconnect for a user who signed up with email/password (adr/0006-email-password-auth.md). */
@@ -18,6 +19,7 @@ export function SettingsPage(): ReactElement {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [verificationSent, setVerificationSent] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   const linkedJustNow = searchParams.get("linked") === "github";
   const redirectError = describeAuthError(searchParams.get("error"));
@@ -87,6 +89,27 @@ export function SettingsPage(): ReactElement {
         {message ? <Alert tone="info" title={message} /> : null}
 
         <section className={styles.section}>
+          <div>
+            <h2 className={styles.sectionTitle}>Theme</h2>
+            <p className={styles.sectionBody}>Choose how AI Architect looks on this device.</p>
+          </div>
+          <div className={styles.themeOptions} aria-label="Theme preference">
+            {(["light", "dark", "system"] as const).map((option) => (
+              <button
+                key={option}
+                type="button"
+                className={[styles.themeOption, theme === option && styles.themeOptionActive].filter(Boolean).join(" ")}
+                onClick={() => setTheme(option)}
+                aria-pressed={theme === option}
+              >
+                <span aria-hidden="true">{option === "light" ? "\u2600" : option === "dark" ? "\u263E" : "\u25D0"}</span>
+                {option.charAt(0).toUpperCase() + option.slice(1)}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Email</h2>
           <p className={styles.sectionBody}>{user.email ?? "No email on this account"}</p>
           {user.email && !user.emailVerified ? (
@@ -120,10 +143,10 @@ export function SettingsPage(): ReactElement {
               ) : null}
             </>
           ) : (
-            <a className={styles.connectButton} href={githubLinkStartUrl()}>
+            <Link className={styles.connectButton} to="/connect-github">
               <GithubMark />
               Connect GitHub
-            </a>
+            </Link>
           )}
         </section>
       </Card>

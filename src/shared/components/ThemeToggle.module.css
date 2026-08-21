@@ -1,0 +1,23 @@
+.toggle {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  position: fixed;
+  top: 18px;
+  right: 24px;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--clay-border);
+  border-radius: 50%;
+  background: var(--clay-surface);
+  box-shadow: var(--clay-shadow-soft);
+  color: var(--clay-text-strong);
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+.toggle:hover { transform: translateY(-2px) rotate(8deg); }
+.toggle:active { transform: none; box-shadow: var(--clay-shadow-pressed); }
+@media (max-width: 768px) { .toggle { width: 40px; height: 40px; top: 10px; right: 16px; } }

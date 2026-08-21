@@ -1,7 +1,16 @@
 .container {
+  --clay-panel-shadow: rgba(169, 107, 48, 0.31);
+  --clay-panel-inset: rgba(148, 88, 35, 0.13);
   display: flex;
   flex-direction: column;
   gap: var(--clay-space-6);
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: clamp(20px, 4vw, 38px);
+  border-radius: 26px;
+  border: 1px solid var(--screen-folder-border);
+  background: var(--screen-folder);
+  box-shadow: var(--clay-shadow-panel);
 }
 
 .header {
@@ -11,8 +20,8 @@
 }
 
 .title {
-  font-size: 32px;
-  font-weight: 700;
+  font-size: clamp(25px, 4vw, 34px);
+  font-weight: 850;
   color: var(--clay-text);
   margin: 0 0 var(--clay-space-2) 0;
 }
@@ -27,6 +36,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--clay-space-6);
+  min-height: 560px;
 }
 
 .treePanel {
@@ -43,6 +53,9 @@
   padding: 0;
   overflow: hidden;
   flex: 1;
+  min-height: 460px;
+  background: var(--clay-surface);
+  border-color: var(--screen-folder-border);
 }
 
 .detailPanel {
@@ -53,6 +66,8 @@
 
 .detailCard {
   padding: var(--clay-space-6);
+  background: var(--screen-answer);
+  border-color: var(--screen-answer-border);
 }
 
 .detailTitle {
@@ -101,7 +116,7 @@
 .actionButton {
   flex: 1;
   padding: var(--clay-space-3);
-  background: var(--clay-accent);
+  background: linear-gradient(145deg, var(--clay-mint), var(--clay-mint-strong));
   color: var(--clay-accent-text);
   border: none;
   border-radius: var(--clay-radius-md);
@@ -143,10 +158,11 @@
 @media (max-width: 1024px) {
   .content {
     grid-template-columns: 1fr;
+    min-height: 0;
   }
 
   .detailPanel {
-    display: none;
+    display: flex;
   }
 }
 

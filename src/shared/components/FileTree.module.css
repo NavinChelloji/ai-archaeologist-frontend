@@ -3,7 +3,7 @@
   flex-direction: column;
   background: var(--clay-surface);
   border-radius: var(--clay-radius-md);
-  border: 1px solid var(--clay-shadow-dark);
+  border: 1px solid var(--clay-border);
   overflow-y: auto;
   max-height: 600px;
 }
@@ -27,12 +27,12 @@
 }
 
 .node:hover {
-  background: var(--clay-bg);
+  background: var(--clay-yellow-soft);
   color: var(--clay-text);
 }
 
 .node.selected {
-  background: var(--clay-accent);
+  background: linear-gradient(145deg,var(--clay-accent),var(--clay-accent-strong));
   color: var(--clay-accent-text);
   font-weight: 500;
 }

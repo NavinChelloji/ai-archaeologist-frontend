@@ -10,8 +10,9 @@ import {
   SignupPage,
   VerifyEmailPage,
   HomePage,
+  SplashPage,
 } from "./lazy-routes";
-import { lazyRoutes, withSuspense } from "./lazy-routes";
+import { lazyRoutes } from "./lazy-routes";
 import { ProtectedRoute } from "./auth-guard";
 import { MainLayout } from "./MainLayout";
 
@@ -24,6 +25,7 @@ export function AppRoutes(): ReactElement {
       <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/verify-email" element={<VerifyEmailPage />} />
       <Route path="/auth/callback" element={<AuthCallbackPage />} />
+      <Route path="/welcome" element={<SplashPage />} />
 
       {/* Protected routes with MainLayout */}
       <Route
@@ -54,6 +56,14 @@ export function AppRoutes(): ReactElement {
           element={
             <Suspense fallback={<LoadingState message="Loading repository..." />}>
               <lazyRoutes.RepositoryOverviewPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/repositories/:repoId/processing"
+          element={
+            <Suspense fallback={<LoadingState message="Loading indexing status..." />}>
+              <lazyRoutes.IndexingProgressPage />
             </Suspense>
           }
         />
@@ -94,6 +104,14 @@ export function AppRoutes(): ReactElement {
           element={
             <Suspense fallback={<LoadingState message="Loading settings..." />}>
               <lazyRoutes.SettingsPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/connect-github"
+          element={
+            <Suspense fallback={<LoadingState message="Loading GitHub connection..." />}>
+              <lazyRoutes.GithubConnectionPage />
             </Suspense>
           }
         />
