@@ -31,5 +31,19 @@ export default defineConfig({
   build: {
     outDir: "dist",
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Vendor chunks
+          "react-vendor": ["react", "react-dom", "react-router-dom"],
+          "query-vendor": ["@tanstack/react-query"],
+          // Large feature libraries
+          "graph-viz": ["reactflow"],
+          "markdown": ["react-markdown"],
+          "syntax": ["prismjs"],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1024,
   },
 });

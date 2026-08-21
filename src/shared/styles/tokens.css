@@ -1,0 +1,67 @@
+/*
+ * Claymorphism design tokens: soft, puffy, extruded surfaces built from a
+ * dual light/dark shadow pair on a monochrome background — not flat
+ * "neumorphism" grey, but a warmer pastel palette with one saturated
+ * accent. Redefined under prefers-color-scheme so components never
+ * hardcode a color.
+ */
+:root {
+  --clay-bg: #e9edf5;
+  --clay-surface: #eef1f8;
+  --clay-surface-raised: #f4f6fb;
+  --clay-shadow-light: rgba(255, 255, 255, 0.85);
+  --clay-shadow-dark: rgba(163, 177, 198, 0.55);
+
+  --clay-text: #33394d;
+  --clay-text-muted: #6b7280;
+
+  --clay-accent: #6c63ff;
+  --clay-accent-text: #ffffff;
+  --clay-accent-shadow-light: rgba(255, 255, 255, 0.35);
+  --clay-accent-shadow-dark: rgba(69, 58, 196, 0.45);
+
+  --clay-danger: #e14e63;
+  --clay-success: #2fb787;
+
+  --clay-radius-lg: 28px;
+  --clay-radius-md: 18px;
+  --clay-radius-sm: 12px;
+  --clay-radius-pill: 999px;
+
+  --clay-space-1: 4px;
+  --clay-space-2: 8px;
+  --clay-space-3: 16px;
+  --clay-space-4: 24px;
+  --clay-space-5: 32px;
+  --clay-space-6: 48px;
+
+  --clay-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --clay-shadow-raised: 8px 8px 16px var(--clay-shadow-dark), -8px -8px 16px var(--clay-shadow-light);
+  --clay-shadow-soft: 4px 4px 10px var(--clay-shadow-dark), -4px -4px 10px var(--clay-shadow-light);
+  --clay-shadow-pressed: inset 4px 4px 8px var(--clay-shadow-dark), inset -4px -4px 8px var(--clay-shadow-light);
+
+  --clay-shadow-accent-raised: 8px 8px 16px var(--clay-accent-shadow-dark), -8px -8px 16px var(--clay-accent-shadow-light);
+  --clay-shadow-accent-pressed: inset 4px 4px 8px var(--clay-accent-shadow-dark),
+    inset -4px -4px 8px var(--clay-accent-shadow-light);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --clay-bg: #1c2029;
+    --clay-surface: #232937;
+    --clay-surface-raised: #29303f;
+    --clay-shadow-light: rgba(255, 255, 255, 0.045);
+    --clay-shadow-dark: rgba(0, 0, 0, 0.65);
+
+    --clay-text: #e7e9f3;
+    --clay-text-muted: #9aa1b5;
+
+    --clay-accent: #8b82ff;
+    --clay-accent-shadow-light: rgba(255, 255, 255, 0.06);
+    --clay-accent-shadow-dark: rgba(0, 0, 0, 0.55);
+
+    --clay-danger: #ff6b7a;
+    --clay-success: #4ade80;
+  }
+}

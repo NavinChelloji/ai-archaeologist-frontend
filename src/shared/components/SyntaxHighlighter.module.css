@@ -1,0 +1,65 @@
+.container {
+  background: #1e1e1e;
+  border-radius: var(--clay-radius-md);
+  overflow: hidden;
+  font-family: var(--font-mono);
+}
+
+.pre {
+  margin: 0;
+  padding: 0;
+  background: #1e1e1e;
+  color: #d4d4d4;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow: auto;
+  max-height: 500px;
+}
+
+.codeTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+  padding: 0;
+}
+
+.codeLine {
+  transition: background-color 150ms ease-in-out;
+}
+
+.codeLine:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.lineNumber {
+  width: 50px;
+  padding: 4px 12px;
+  background-color: rgba(0, 0, 0, 0.2);
+  color: #858585;
+  text-align: right;
+  user-select: none;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  vertical-align: top;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.lineContent {
+  padding: 4px 16px;
+  vertical-align: top;
+}
+
+.lineContent .pre {
+  max-height: none;
+  overflow: visible;
+}
+
+.lineContent code {
+  all: unset;
+  display: inline;
+  color: #d4d4d4;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+}
