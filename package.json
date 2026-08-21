@@ -6,20 +6,27 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -p tsconfig.json --noEmit && vite build",
+    "build:analyze": "tsc -p tsconfig.json --noEmit && vite build --mode analyze",
     "start": "node server.mjs",
     "test": "vitest run",
     "lint": "eslint .",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "perf": "node -e \"require('perf_hooks').performance.mark('app-start'); require('./src/main.tsx'); require('perf_hooks').performance.mark('app-end'); console.log('Load time:', require('perf_hooks').performance.measure('app-load', 'app-start', 'app-end').duration, 'ms');\""
   },
   "dependencies": {
+    "@aca/contracts": "workspace:*",
     "@tanstack/react-query": "^5.101.4",
+    "prismjs": "^1.30.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "react-router-dom": "^7.18.2"
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.18.2",
+    "reactflow": "^11.11.4"
   },
   "devDependencies": {
     "@aca/eslint-config": "workspace:*",
     "@aca/tsconfig": "workspace:*",
+    "@types/prismjs": "^1.26.6",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^5.0.4",

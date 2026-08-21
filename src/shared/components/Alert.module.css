@@ -1,0 +1,32 @@
+.alert {
+  border-radius: var(--clay-radius-md);
+  padding: var(--clay-space-3) var(--clay-space-4);
+  box-shadow: var(--clay-shadow-soft);
+  background: var(--clay-surface);
+  border-left: 4px solid transparent;
+}
+
+.danger {
+  border-left-color: var(--clay-danger);
+}
+
+.info {
+  border-left-color: var(--clay-accent);
+}
+
+.title {
+  font-weight: 600;
+}
+
+.body {
+  margin-top: var(--clay-space-1);
+  color: var(--clay-text-muted);
+  font-size: 14px;
+}
+
+.correlation {
+  margin-top: var(--clay-space-2);
+  font-size: 12px;
+  color: var(--clay-text-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}

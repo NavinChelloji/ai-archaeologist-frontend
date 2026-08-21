@@ -1,0 +1,6 @@
+.card {
+  background: var(--clay-surface);
+  border-radius: var(--clay-radius-lg);
+  box-shadow: var(--clay-shadow-raised);
+  padding: var(--clay-space-5);
+}

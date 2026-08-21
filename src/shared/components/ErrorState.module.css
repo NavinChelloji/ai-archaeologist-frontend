@@ -1,0 +1,43 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--clay-space-4);
+  padding: var(--clay-space-6);
+  min-height: 300px;
+  color: var(--clay-text);
+}
+
+.icon {
+  font-size: 48px;
+  opacity: 0.6;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--clay-text);
+}
+
+.message {
+  font-size: 14px;
+  color: var(--clay-text-muted);
+  margin: 0;
+  text-align: center;
+  max-width: 400px;
+}
+
+.details {
+  font-size: 12px;
+  color: var(--clay-text-muted);
+  margin: 0;
+  font-family: monospace;
+  padding: var(--clay-space-3);
+  background: var(--clay-bg);
+  border-radius: var(--clay-radius-sm);
+  max-width: 400px;
+  max-height: 150px;
+  overflow: auto;
+}

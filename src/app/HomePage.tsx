@@ -1,43 +1,29 @@
-import { useQuery } from "@tanstack/react-query";
-import { apiFetch } from "../shared/api/client";
+import type { ReactElement } from "react";
+import { Link } from "react-router-dom";
+import { Button } from "../shared/components/Button";
+import { Card } from "../shared/components/Card";
+import { useAuth } from "../features/auth/auth-context";
+import styles from "./HomePage.module.css";
 
-interface DependencyStatus {
-  status: "ok" | "error";
-  error?: string;
-}
-
-interface ReadyResponse {
-  status: "ok" | "error";
-  dependencies: Record<string, DependencyStatus>;
-}
-
-/** Confirms the web app can reach api and shows what api itself reports as ready — the Stage 1 smoke test made visible. */
-export function HomePage() {
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["api-health"],
-    queryFn: () => apiFetch<ReadyResponse>("/health/ready"),
-    refetchInterval: 5000,
-  });
+/** Stage 2's "you're signed in" placeholder — the repository list replaces this in Stage 3. */
+export function HomePage(): ReactElement {
+  const { user, logout } = useAuth();
 
   return (
-    <main>
-      <h1>AI Code Archaeologist</h1>
-      <p>Pre-implementation scaffold — Stage 1: monorepo and infrastructure.</p>
-      <section>
-        <h2>api /health/ready</h2>
-        {isLoading && <p>Checking…</p>}
-        {isError && <p>Could not reach the api service.</p>}
-        {data && (
-          <ul>
-            {Object.entries(data.dependencies).map(([name, dep]) => (
-              <li key={name}>
-                {name}: {dep.status}
-                {dep.error ? ` (${dep.error})` : ""}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-    </main>
+    <div className={styles.page}>
+      <Card className={styles.card}>
+        {user?.avatarUrl ? <img className={styles.avatar} src={user.avatarUrl} alt="" /> : null}
+        <h1 className={styles.name}>{user?.displayName ?? user?.githubLogin}</h1>
+        <p className={styles.login}>@{user?.githubLogin}</p>
+        {user?.email ? <p className={styles.email}>{user.email}</p> : null}
+        {user ? (
+          <p className={styles.since}>Signed in since {new Date(user.createdAt).toLocaleDateString()}</p>
+        ) : null}
+        <Link to="/settings">Settings</Link>
+        <Button className={styles.signOut} variant="danger" onClick={() => void logout()}>
+          Sign out
+        </Button>
+      </Card>
+    </div>
   );
 }
