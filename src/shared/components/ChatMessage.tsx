@@ -1,12 +1,11 @@
-import { Badge } from "./Badge";
 import { MarkdownRenderer } from "./MarkdownRenderer";
 import styles from "./ChatMessage.module.css";
 
 export interface Citation {
-  fileId: string;
-  filePath: string;
+  path: string;
   startLine: number;
   endLine: number;
+  symbolName?: string | null;
 }
 
 export interface ChatMessageProps {
@@ -46,12 +45,12 @@ export function ChatMessage({
                 <div className={styles.citationsList}>
                   {citations.map((citation, idx) => (
                     <button
-                      key={`${citation.fileId}-${idx}`}
+                      key={`${citation.path}-${citation.startLine}-${idx}`}
                       className={styles.citationChip}
                       onClick={() => onCitationClick?.(citation)}
-                      title={`${citation.filePath}:${citation.startLine}-${citation.endLine}`}
+                      title={`${citation.path}:${citation.startLine}-${citation.endLine}`}
                     >
-                      {citation.filePath}:{citation.startLine}-{citation.endLine}
+                      {citation.path}:{citation.startLine}-{citation.endLine}
                     </button>
                   ))}
                 </div>

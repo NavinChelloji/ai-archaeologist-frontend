@@ -21,8 +21,8 @@ export function getDependencyGraph(repoId: string): Promise<GraphResponse> {
   return apiFetch<GraphResponse>(`/api/v1/repositories/${repoId}/graph/dependencies`);
 }
 
-export function getSymbolGraph(repoId: string, fileId?: string): Promise<GraphResponse> {
-  const params = new URLSearchParams({ ...(fileId && { fileId }) });
+export function getSymbolGraph(repoId: string, filePath?: string): Promise<GraphResponse> {
+  const params = new URLSearchParams({ ...(filePath && { filePath }) });
   return apiFetch<GraphResponse>(`/api/v1/repositories/${repoId}/graph/symbols?${params}`);
 }
 
