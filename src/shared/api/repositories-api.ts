@@ -4,6 +4,8 @@ import type {
   ImportRepositoryResponse,
   ProcessingJobDto,
   RepositoriesListResponse,
+  TreeNodeDto,
+  TreeResponse,
 } from "@aca/contracts";
 import { apiFetch } from "./client";
 
@@ -74,9 +76,31 @@ export function importRepository(body: ImportRepositoryRequest): Promise<ImportR
   });
 }
 
+// `/tree` returns nested nodes lazily to `TREE_DEPTH` levels (GRAPH_SERVICE_PLAN.md "/tree ... nested
+// structure with lazy children"); folders deeper than that arrive with `hasChildren: true` but no
+// `children` and won't expand until FileTree gains re-query-on-expand support.
+const TREE_DEPTH = 10;
+
+function toFileNode(node: TreeNodeDto): FileNode {
+  return {
+    id: node.id,
+    name: node.name,
+    type: node.type === "directory" ? "folder" : "file",
+    language: node.language ?? undefined,
+    children: node.children?.map(toFileNode),
+  };
+}
+
+function countFiles(nodes: FileNode[]): number {
+  return nodes.reduce((sum, node) => sum + (node.type === "file" ? 1 : 0) + countFiles(node.children ?? []), 0);
+}
+
 export function getFileTree(repoId: string, path?: string): Promise<FileTreeResponse> {
-  const params = new URLSearchParams({ ...(path && { path }) });
-  return apiFetch<FileTreeResponse>(`/api/v1/repositories/${repoId}/files?${params}`);
+  const params = new URLSearchParams({ depth: String(TREE_DEPTH), ...(path && { path }) });
+  return apiFetch<TreeResponse>(`/api/v1/repositories/${repoId}/tree?${params}`).then((tree) => {
+    const nodes = tree.root.children?.map(toFileNode) ?? [];
+    return { nodes, totalFiles: countFiles(nodes) };
+  });
 }
 
 export function getLanguageBreakdown(repoId: string): Promise<LanguageBreakdown[]> {

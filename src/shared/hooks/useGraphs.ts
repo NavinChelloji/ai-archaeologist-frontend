@@ -9,10 +9,10 @@ export function useDependencyGraph(repoId: string) {
   });
 }
 
-export function useSymbolGraph(repoId: string, fileId?: string) {
+export function useSymbolGraph(repoId: string, filePath?: string) {
   return useQuery({
-    queryKey: ["graph", repoId, "symbols", fileId],
-    queryFn: () => getSymbolGraph(repoId, fileId),
+    queryKey: ["graph", repoId, "symbols", filePath],
+    queryFn: () => getSymbolGraph(repoId, filePath),
     enabled: !!repoId,
   });
 }

@@ -1,103 +1,97 @@
-import { apiFetch } from "./client";
+import type {
+  ChatCitationEvent,
+  ChatDoneEvent,
+  ChatErrorEvent,
+  ChatUsageEvent,
+  ConversationDto,
+  ConversationsListResponse,
+  MessagesListResponse,
+} from "@aca/contracts";
+import { apiFetch, apiFetchStream } from "./client";
 
-export interface Citation {
-  fileId: string;
-  filePath: string;
-  startLine: number;
-  endLine: number;
-}
-
-export interface ChatMessage {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  citations?: Citation[];
-  timestamp: Date;
-}
-
-export interface ChatMessageRequest {
-  message: string;
-  conversationId?: string;
-}
-
-export interface ChatMessageResponse {
-  id: string;
-  content: string;
-  citations: Citation[];
-  createdAt: string;
-}
-
-export interface ConversationResponse {
-  id: string;
-  repoId: string;
-  messages: ChatMessage[];
-  createdAt: string;
-}
-
-export async function* sendChatMessage(repoId: string, request: ChatMessageRequest): AsyncGenerator<string> {
-  const response = await fetch(`http://localhost:3000/api/v1/chat/${repoId}`, {
+export function createConversation(repoId: string, title?: string): Promise<ConversationDto> {
+  return apiFetch<ConversationDto>(`/api/v1/repositories/${repoId}/conversations`, {
     method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify(request),
-    credentials: "include",
+    body: JSON.stringify({ title }),
+  });
+}
+
+export function listConversations(repoId: string, cursor?: string, pageSize = 20): Promise<ConversationsListResponse> {
+  const params = new URLSearchParams({ pageSize: String(pageSize) });
+  if (cursor) params.set("cursor", cursor);
+  return apiFetch<ConversationsListResponse>(`/api/v1/repositories/${repoId}/conversations?${params}`);
+}
+
+export function listMessages(conversationId: string, cursor?: string, pageSize = 50): Promise<MessagesListResponse> {
+  const params = new URLSearchParams({ pageSize: String(pageSize) });
+  if (cursor) params.set("cursor", cursor);
+  return apiFetch<MessagesListResponse>(`/api/v1/conversations/${conversationId}/messages?${params}`);
+}
+
+export interface ChatStreamHandlers {
+  onToken?: (delta: string) => void;
+  onCitation?: (citation: ChatCitationEvent) => void;
+  onUsage?: (usage: ChatUsageEvent) => void;
+  onDone?: (data: ChatDoneEvent) => void;
+  onError?: (err: ChatErrorEvent) => void;
+}
+
+/**
+ * POSTs the user's message and reads the SSE token stream back
+ * (CHAT_SERVICE_PLAN.md "SSE event types"). Native `EventSource` can't POST
+ * or set headers, so this is a manual `fetch` + `ReadableStream` reader —
+ * the same workaround every browser-based SSE-over-POST client needs.
+ */
+export async function streamMessage(conversationId: string, content: string, handlers: ChatStreamHandlers, signal?: AbortSignal): Promise<void> {
+  const response = await apiFetchStream(`/api/v1/conversations/${conversationId}/messages`, {
+    method: "POST",
+    body: JSON.stringify({ content }),
+    signal,
   });
 
-  if (!response.ok) {
-    throw new Error(`Chat error: ${response.statusText}`);
-  }
-
-  if (!response.body) {
-    throw new Error("No response body");
-  }
+  if (!response.body) return;
 
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
 
-  try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
 
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split("\n");
-      buffer = lines.pop() || "";
+    buffer += decoder.decode(value, { stream: true });
+    const events = buffer.split("\n\n");
+    buffer = events.pop() ?? "";
 
-      for (const line of lines) {
-        if (line.startsWith("data: ")) {
-          try {
-            const data = JSON.parse(line.slice(6));
-            if (data.content) {
-              yield data.content;
-            }
-          } catch {
-            // Skip invalid JSON
-          }
-        }
-      }
-    }
+    for (const raw of events) {
+      const eventMatch = raw.match(/^event: (\w+)/m);
+      const dataMatch = raw.match(/^data: (.*)$/m);
+      if (!eventMatch || !dataMatch) continue;
 
-    if (buffer.startsWith("data: ")) {
+      let data: unknown;
       try {
-        const data = JSON.parse(buffer.slice(6));
-        if (data.content) {
-          yield data.content;
-        }
+        data = JSON.parse(dataMatch[1]!);
       } catch {
-        // Skip invalid JSON
+        continue;
+      }
+
+      switch (eventMatch[1]) {
+        case "token":
+          handlers.onToken?.((data as { delta: string }).delta);
+          break;
+        case "citation":
+          handlers.onCitation?.(data as ChatCitationEvent);
+          break;
+        case "usage":
+          handlers.onUsage?.(data as ChatUsageEvent);
+          break;
+        case "done":
+          handlers.onDone?.(data as ChatDoneEvent);
+          break;
+        case "error":
+          handlers.onError?.(data as ChatErrorEvent);
+          break;
       }
     }
-  } finally {
-    reader.releaseLock();
   }
-}
-
-export function getConversation(repoId: string, conversationId: string): Promise<ConversationResponse> {
-  return apiFetch<ConversationResponse>(`/api/v1/chat/${repoId}/${conversationId}`);
-}
-
-export function getConversationHistory(repoId: string): Promise<ConversationResponse[]> {
-  return apiFetch<ConversationResponse[]>(`/api/v1/chat/${repoId}/history`);
 }

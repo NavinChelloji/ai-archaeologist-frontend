@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Card, Badge, LoadingState, ErrorState, DependencyGraph } from "../../shared/components";
+import { useNavigate, useParams } from "react-router-dom";
+import { Card, Badge, LoadingState, ErrorState, DependencyGraph, FileTree } from "../../shared/components";
 import { useRepository } from "../../shared/hooks/useRepositories";
 import { useDependencyGraph, useSymbolGraph } from "../../shared/hooks/useGraphs";
+import { useFileTree } from "../../shared/hooks/useFileTree";
 import styles from "./RepositoryOverviewPage.module.css";
 
 interface LanguageStats {
@@ -11,12 +12,17 @@ interface LanguageStats {
   color: string;
 }
 
+const TABS = ["overview", "structure", "dependencies", "symbols", "chat"] as const;
+type Tab = Exclude<(typeof TABS)[number], "chat">;
+
 export function RepositoryOverviewPage() {
   const { repoId } = useParams<{ repoId: string }>();
+  const navigate = useNavigate();
   const { data: repositoryData, isLoading, error, refetch } = useRepository(repoId ?? "");
   const { data: depGraph, isLoading: depLoading } = useDependencyGraph(repoId ?? "");
   const { data: symGraph, isLoading: symLoading } = useSymbolGraph(repoId ?? "");
-  const [activeTab, setActiveTab] = useState<"overview" | "structure" | "dependencies" | "symbols" | "chat">("overview");
+  const { data: fileTree, isLoading: structureLoading } = useFileTree(repoId ?? "");
+  const [activeTab, setActiveTab] = useState<Tab>("overview");
 
   const languageStats: LanguageStats[] = useMemo(() => {
     if (!repositoryData?.languages) return [];
@@ -114,11 +120,11 @@ export function RepositoryOverviewPage() {
       {/* Tabs */}
       <div className={styles.tabs}>
         <div className={styles.tabList}>
-          {["overview", "structure", "dependencies", "symbols", "chat"].map((tab) => (
+          {TABS.map((tab) => (
             <button
               key={tab}
-              className={[styles.tab, activeTab === tab && styles.active].filter(Boolean).join(" ")}
-              onClick={() => setActiveTab(tab as any)}
+              className={[styles.tab, tab !== "chat" && activeTab === tab && styles.active].filter(Boolean).join(" ")}
+              onClick={() => (tab === "chat" ? navigate(`/repositories/${repoId}/chat`) : setActiveTab(tab))}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>
@@ -135,9 +141,15 @@ export function RepositoryOverviewPage() {
           )}
           {activeTab === "structure" && (
             <Card>
-              <div className={styles.tabText}>
-                <p>Structure tab - Folder tree view (to be implemented)</p>
-              </div>
+              {structureLoading ? (
+                <LoadingState message="Loading file structure..." />
+              ) : fileTree && fileTree.nodes.length > 0 ? (
+                <FileTree data={fileTree.nodes} />
+              ) : (
+                <div className={styles.tabText}>
+                  <p>No file structure available for this repository</p>
+                </div>
+              )}
             </Card>
           )}
           {activeTab === "dependencies" && (
@@ -164,13 +176,6 @@ export function RepositoryOverviewPage() {
                   <p>No symbol data available for this repository</p>
                 </div>
               )}
-            </Card>
-          )}
-          {activeTab === "chat" && (
-            <Card>
-              <div className={styles.tabText}>
-                <p>Chat tab - Repo-aware chat (to be implemented)</p>
-              </div>
             </Card>
           )}
         </div>

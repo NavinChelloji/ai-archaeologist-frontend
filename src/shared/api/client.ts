@@ -34,10 +34,9 @@ export interface ApiFetchOptions extends RequestInit {
   skipAuth?: boolean;
 }
 
-export async function apiFetch<T>(path: string, init: ApiFetchOptions = {}, isRetry = false): Promise<T> {
+/** Auth header + 401-refresh-retry, shared by both the JSON (`apiFetch`) and streaming (`apiFetchStream`) callers — neither parses the body, so the retry dance only needs to live here once. */
+async function rawFetch(path: string, init: ApiFetchOptions, isRetry: boolean): Promise<Response> {
   const headers = new Headers(init.headers);
-  headers.set("content-type", "application/json");
-
   const token = getAccessToken();
   if (!init.skipAuth && token) {
     headers.set("authorization", `Bearer ${token}`);
@@ -47,8 +46,17 @@ export async function apiFetch<T>(path: string, init: ApiFetchOptions = {}, isRe
 
   if (response.status === 401 && !init.skipAuth && !isRetry) {
     await refreshAccessToken();
-    return apiFetch<T>(path, init, true);
+    return rawFetch(path, init, true);
   }
+
+  return response;
+}
+
+export async function apiFetch<T>(path: string, init: ApiFetchOptions = {}): Promise<T> {
+  const headers = new Headers(init.headers);
+  headers.set("content-type", "application/json");
+
+  const response = await rawFetch(path, { ...init, headers }, false);
 
   if (!response.ok) {
     throw await toApiError(response);
@@ -59,4 +67,18 @@ export async function apiFetch<T>(path: string, init: ApiFetchOptions = {}, isRe
   }
 
   return (await response.json()) as T;
+}
+
+/** For SSE (or any other non-JSON-body) endpoints — same auth/refresh handling as `apiFetch`, but hands back the raw `Response` instead of parsing it. */
+export async function apiFetchStream(path: string, init: ApiFetchOptions = {}): Promise<Response> {
+  const headers = new Headers(init.headers);
+  headers.set("content-type", "application/json");
+
+  const response = await rawFetch(path, { ...init, headers }, false);
+
+  if (!response.ok) {
+    throw await toApiError(response);
+  }
+
+  return response;
 }
