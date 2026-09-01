@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactElement } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { resendVerification, unlinkGithub } from "../features/auth/auth-api";
+import { deleteAccount, resendVerification, unlinkGithub } from "../features/auth/auth-api";
 import { useAuth } from "../features/auth/auth-context";
 import { describeAuthError } from "../features/auth/error-messages";
 import { ApiError } from "../shared/api/errors";
@@ -8,18 +8,26 @@ import { Alert } from "../shared/components/Alert";
 import { Button } from "../shared/components/Button";
 import { Card } from "../shared/components/Card";
 import { GithubMark } from "../shared/components/icons";
+import { Input } from "../shared/components/Input";
+import { Modal } from "../shared/components/Modal";
 import { useTheme } from "../shared/hooks/useTheme";
 import styles from "./SettingsPage.module.css";
+
+const DELETE_CONFIRMATION_PHRASE = "DELETE";
 
 /** GitHub connect/disconnect for a user who signed up with email/password (adr/0006-email-password-auth.md). */
 export function SettingsPage(): ReactElement {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { user, refetchUser } = useAuth();
+  const { user, refetchUser, logout } = useAuth();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [verificationSent, setVerificationSent] = useState(false);
   const { theme, setTheme } = useTheme();
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const linkedJustNow = searchParams.get("linked") === "github";
   const redirectError = describeAuthError(searchParams.get("error"));
@@ -50,6 +58,19 @@ export function SettingsPage(): ReactElement {
       setError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function handleDeleteAccount(): Promise<void> {
+    setDeleteError(null);
+    setDeleting(true);
+    try {
+      await deleteAccount();
+      await logout();
+    } catch (err) {
+      setDeleteError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -149,7 +170,63 @@ export function SettingsPage(): ReactElement {
             </Link>
           )}
         </section>
+
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Danger zone</h2>
+          <p className={styles.sectionBody}>
+            Deleting your account removes your code, index, and conversations within an hour and cannot be undone.
+          </p>
+          <Button
+            variant="danger"
+            onClick={() => {
+              setDeleteConfirmation("");
+              setDeleteError(null);
+              setShowDeleteAccount(true);
+            }}
+          >
+            Delete account
+          </Button>
+        </section>
       </Card>
+
+      <Modal
+        isOpen={showDeleteAccount}
+        onClose={() => (deleting ? undefined : setShowDeleteAccount(false))}
+        title="Delete your account?"
+        actions={
+          <>
+            <Button variant="neutral" onClick={() => setShowDeleteAccount(false)} disabled={deleting}>
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              onClick={() => void handleDeleteAccount()}
+              disabled={deleting || deleteConfirmation !== DELETE_CONFIRMATION_PHRASE}
+            >
+              {deleting ? "Deleting..." : "Delete my account"}
+            </Button>
+          </>
+        }
+      >
+        <p>
+          This permanently deletes every repository you&apos;ve imported, their index, and all conversations. This
+          cannot be undone.
+        </p>
+        <p>
+          Type <strong>{DELETE_CONFIRMATION_PHRASE}</strong> to confirm.
+        </p>
+        <Input
+          value={deleteConfirmation}
+          onChange={(e) => setDeleteConfirmation(e.target.value)}
+          placeholder={DELETE_CONFIRMATION_PHRASE}
+          disabled={deleting}
+        />
+        {deleteError ? (
+          <Alert tone="danger" title="Couldn't delete your account">
+            {deleteError}
+          </Alert>
+        ) : null}
+      </Modal>
     </div>
   );
 }

@@ -65,3 +65,8 @@ export function resetPassword(body: ResetPasswordRequest): Promise<void> {
 export function unlinkGithub(): Promise<void> {
   return apiFetch<void>("/api/v1/auth/github/unlink", { method: "POST" });
 }
+
+/** DATA_RETENTION_AND_PRIVACY.md "Account deletion" — repos, chunks, and conversations are queued for deletion; the account itself is gone immediately. */
+export function deleteAccount(): Promise<void> {
+  return apiFetch<void>("/api/v1/account", { method: "DELETE" });
+}
