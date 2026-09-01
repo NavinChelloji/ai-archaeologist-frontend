@@ -1,4 +1,5 @@
 import type {
+  DeleteRepositoryResponse,
   GithubRepositoriesResponse,
   ImportRepositoryRequest,
   ImportRepositoryResponse,
@@ -74,6 +75,11 @@ export function importRepository(body: ImportRepositoryRequest): Promise<ImportR
     method: "POST",
     body: JSON.stringify(body),
   });
+}
+
+/** Soft-deletes immediately; the full cascade (indexer, ai, S3) finishes asynchronously (DATA_RETENTION_AND_PRIVACY.md "Repository deletion"). */
+export function deleteRepository(repoId: string): Promise<DeleteRepositoryResponse> {
+  return apiFetch<DeleteRepositoryResponse>(`/api/v1/repositories/${repoId}`, { method: "DELETE" });
 }
 
 // `/tree` returns nested nodes lazily to `TREE_DEPTH` levels (GRAPH_SERVICE_PLAN.md "/tree ... nested

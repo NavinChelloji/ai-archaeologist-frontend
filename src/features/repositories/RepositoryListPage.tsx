@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { GithubRepositoryDto } from "@aca/contracts";
-import { Badge, Button, Card, ErrorState, Input, LoadingState } from "../../shared/components";
+import type { GithubRepositoryDto, RepositoryDto } from "@aca/contracts";
+import { Alert, Badge, Button, Card, ErrorState, Input, LoadingState, Modal } from "../../shared/components";
 import { ApiError } from "../../shared/api/errors";
-import { importRepository } from "../../shared/api/repositories-api";
+import { deleteRepository, importRepository } from "../../shared/api/repositories-api";
 import { useGithubRepositories, useMyRepositories } from "../../shared/hooks/useRepositories";
 import styles from "./RepositoryListPage.module.css";
 
@@ -27,6 +27,7 @@ export function RepositoryListPage() {
   const githubRepos = useGithubRepositories({ page, perPage: 30, search: search || undefined });
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const [repoToDelete, setRepoToDelete] = useState<RepositoryDto | null>(null);
 
   const importedFullNames = useMemo(
     () => new Set((myRepos.data?.repositories ?? []).map((repo) => repo.fullName)),
@@ -39,6 +40,14 @@ export function RepositoryListPage() {
       void queryClient.invalidateQueries({ queryKey: ["repositories", "mine"] });
       // Import enqueues the indexing pipeline (DEVELOPMENT_STAGES.md Stage 4) — send the user to watch it run.
       navigate(`/repositories/${repository.repoId}/processing`);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (repoId: string) => deleteRepository(repoId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["repositories", "mine"] });
+      setRepoToDelete(null);
     },
   });
 
@@ -72,6 +81,9 @@ export function RepositoryListPage() {
                     View Repository
                   </Button>
                 </Link>
+                <Button variant="danger" fullWidth className={styles.actionButton} onClick={() => setRepoToDelete(repo)}>
+                  Delete
+                </Button>
               </Card>
             ))}
           </div>
@@ -150,6 +162,36 @@ export function RepositoryListPage() {
           </>
         )}
       </div>
+
+      <Modal
+        isOpen={repoToDelete !== null}
+        onClose={() => (deleteMutation.isPending ? undefined : setRepoToDelete(null))}
+        title="Delete repository?"
+        actions={
+          <>
+            <Button variant="neutral" onClick={() => setRepoToDelete(null)} disabled={deleteMutation.isPending}>
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              onClick={() => repoToDelete && deleteMutation.mutate(repoToDelete.repoId)}
+              disabled={deleteMutation.isPending}
+            >
+              {deleteMutation.isPending ? "Deleting..." : "Delete repository"}
+            </Button>
+          </>
+        }
+      >
+        <p>
+          This removes <strong>{repoToDelete?.fullName}</strong>&apos;s code, index, and conversations. This cannot
+          be undone.
+        </p>
+        {deleteMutation.error && (
+          <Alert tone="danger" title="Couldn't delete this repository">
+            {deleteMutation.error instanceof ApiError ? deleteMutation.error.message : "Something went wrong. Please try again."}
+          </Alert>
+        )}
+      </Modal>
     </div>
   );
 }

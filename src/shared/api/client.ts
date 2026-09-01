@@ -54,7 +54,15 @@ async function rawFetch(path: string, init: ApiFetchOptions, isRetry: boolean): 
 
 export async function apiFetch<T>(path: string, init: ApiFetchOptions = {}): Promise<T> {
   const headers = new Headers(init.headers);
-  headers.set("content-type", "application/json");
+  // Only declare a JSON body when one is actually being sent — Fastify treats
+  // DELETE/POST/PUT/PATCH as body-carrying methods and tries to JSON-parse
+  // whatever the Content-Type header claims, so a bodyless DELETE (or any
+  // other bodyless mutation) sent with `content-type: application/json`
+  // fails server-side with FST_ERR_CTP_EMPTY_JSON_BODY before it ever
+  // reaches the route handler.
+  if (init.body !== undefined) {
+    headers.set("content-type", "application/json");
+  }
 
   const response = await rawFetch(path, { ...init, headers }, false);
 
@@ -72,7 +80,9 @@ export async function apiFetch<T>(path: string, init: ApiFetchOptions = {}): Pro
 /** For SSE (or any other non-JSON-body) endpoints — same auth/refresh handling as `apiFetch`, but hands back the raw `Response` instead of parsing it. */
 export async function apiFetchStream(path: string, init: ApiFetchOptions = {}): Promise<Response> {
   const headers = new Headers(init.headers);
-  headers.set("content-type", "application/json");
+  if (init.body !== undefined) {
+    headers.set("content-type", "application/json");
+  }
 
   const response = await rawFetch(path, { ...init, headers }, false);
 
